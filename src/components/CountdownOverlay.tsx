@@ -12,19 +12,23 @@ export const CountdownOverlay: React.FC<CountdownOverlayProps> = ({ isVisible, o
   React.useEffect(() => {
     if (!isVisible) return;
 
+    // Reset the countdown when the countdown is visible
+    setCount(3);
+
     const timer = setInterval(() => {
       setCount((prev) => {
         if (prev === 1) {
           clearInterval(timer);
-          onComplete();
-          return 3;
+          // Call onComplete after the countdown finishes
+          onComplete(); 
+          return 3; // Reset the countdown after completing
         }
         return prev - 1;
       });
     }, 1000);
 
-    return () => clearInterval(timer);
-  }, [isVisible, onComplete]);
+    return () => clearInterval(timer); // Cleanup interval on unmount or state change
+  }, [isVisible, onComplete]); // Dependencies to restart when visibility changes
 
   return (
     <AnimatePresence>
@@ -34,6 +38,8 @@ export const CountdownOverlay: React.FC<CountdownOverlayProps> = ({ isVisible, o
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-40"
+          role="alert"
+          aria-live="assertive"
         >
           <motion.div
             key={count}
